@@ -8,6 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
+            android:theme="@style/AppTheme"
             android:name="com.sky.expense.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
@@ -16,6 +17,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider android:name=".DataBase.DataProvider"
+            android:authorities="com.sky.expense.DataProvider"/>
+
     </application>
 
 </manifest>
