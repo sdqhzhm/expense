@@ -18,8 +18,8 @@ public class DataProvider extends ContentProvider {
     private SQLiteDatabase db;
 
     private static final String AUTHORITY = "com.sky.expense.DataProvider";
-    private static final int TRANSACTION_ALL = 0;
-    private static final int TRANSACTION_ONE = 1;
+    public static final int TRANSACTION_ALL = 0;
+    public static final int TRANSACTION_ONE = 1;
 
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/com.sky.transaction";
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/com.sky.transaction";
@@ -27,11 +27,13 @@ public class DataProvider extends ContentProvider {
     //数据改变后立即重新查询
     private static final Uri NOTIFY_URI = Uri.parse("content://" + AUTHORITY + "/transactions");
 
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/transactions");
+
     static {
         matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
-        matcher.addURI(AUTHORITY, "transaction", TRANSACTION_ALL);   //匹配记录集合
-        matcher.addURI(AUTHORITY, "transaction/#", TRANSACTION_ONE); //匹配单条记录
+        matcher.addURI(AUTHORITY, "transactions", TRANSACTION_ALL);   //匹配记录集合
+        matcher.addURI(AUTHORITY, "transactions/#", TRANSACTION_ONE); //匹配单条记录
     }
 
     @Override
@@ -70,15 +72,12 @@ public class DataProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-        return db.query("person", projection, selection, selectionArgs, null, null, sortOrder);
+        return db.query("transactions", projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         int match = matcher.match(uri);
-        if (match != TRANSACTION_ALL) {
-            throw new IllegalArgumentException("Wrong URI: " + uri);
-        }
         db = helper.getWritableDatabase();
         if (values == null) {
             values = new ContentValues();

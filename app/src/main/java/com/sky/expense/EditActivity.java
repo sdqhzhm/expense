@@ -2,21 +2,30 @@ package com.sky.expense;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.sky.expense.DataBase.DBHelper;
+import com.sky.expense.DataBase.DataProvider;
 import com.sky.expense.UI.DatePickerFragment;
 import com.sky.expense.UI.MoneyDialog;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class EditActivity extends Activity {
@@ -28,9 +37,9 @@ public class EditActivity extends Activity {
 
 
     private TextView mMoneyText, mDateText;
+    private EditText mDescriptionEdit;
 
     private String mSortKey;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +91,8 @@ public class EditActivity extends Activity {
                 }
             }
         });
+
+        mDescriptionEdit = (EditText) findViewById(R.id.description);
     }
 
     @Override
@@ -104,6 +115,30 @@ public class EditActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            return true;
+        } else if (id == R.id.action_save) {
+            ContentResolver resolver =  getContentResolver();
+            ContentValues values = new ContentValues();
+            values.put(DBHelper.KEY_AMOUNT, Float.parseFloat(mMoneyText.getText().toString()));
+            values.put(DBHelper.KEY_NAME, mSortKey);
+            values.put(DBHelper.KEY_TYPE, mSortKey);
+            values.put(DBHelper.KEY_DESCRIPTION, mDescriptionEdit.getText().toString());
+            DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+            Date date = new Date();
+            try {
+                date = df.parse(mDateText.getText().toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            DateFormat sqlDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            values.put(DBHelper.KEY_TIMESTAMP, sqlDF.format(date));
+            Uri result = resolver.insert(DataProvider.CONTENT_URI, values);
+            if (result == null) {
+                Toast.makeText(this,R.string.save_fail,Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this,R.string.save_success,Toast.LENGTH_SHORT).show();
+            }
+            this.finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

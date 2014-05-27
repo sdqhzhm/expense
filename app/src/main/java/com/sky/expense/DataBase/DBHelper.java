@@ -14,7 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String TRANSACTIONS_TABLE_NAME 	= "transactions";
 
-    public static final String KEY_ROW_ID 	= "_id";
+    private static final String KEY_ROW_ID 	= "_id";
     public static final String KEY_NAME 	= "name";
     public static final String KEY_TYPE 	= "type";
     public static final String KEY_AMOUNT 		= "amount";
@@ -26,10 +26,10 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TRANSACTIONS_TABLE_CREATE = "create table if not exists " + TRANSACTIONS_TABLE_NAME + " ("
             + KEY_ROW_ID 		+ " integer primary key autoincrement, "
             + KEY_NAME 			+ " text, "
-            + KEY_TYPE 			+ " varchar(255) not null, "
+            + KEY_TYPE 			+ " text not null, "
             + KEY_AMOUNT 		+ " real default 0, "
             + KEY_DESCRIPTION 	+ " text, "
-            + KEY_TIMESTAMP 	+ " integer not null, "
+            + KEY_TIMESTAMP 	+ " text not null "
             + ");";
 
 

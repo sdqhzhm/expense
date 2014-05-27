@@ -2,16 +2,25 @@ package com.sky.expense;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.sky.expense.DataBase.DBHelper;
+import com.sky.expense.DataBase.DataProvider;
+import com.sky.expense.UI.DensityUtil;
 import com.sky.expense.UI.ProgressCircle;
 
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by sky on 2014/5/9.
@@ -27,14 +36,23 @@ public class MainFragment extends Fragment {
 
     private ProgressCircle mProgressCircle;
 
+    private float mFoodMoney = 0, mHealthMoney = 0, mTrafficMoney = 0, mOtherMoney = 0;
+    private TextView mFoodText, mHealthText, mTrafficText, mOtherText, mPercentText, mAllText, mQuotaText, mOverText;
+    private View mFoodFlag, mHealthFlag, mTrafficFlag, mOtherFlag;
+
+    private float mQuota = 1500;
 
     private MyHandler mIncrementHandler = new MyHandler(this);
 
     public static class MyHandler extends Handler {
 
-        private int mSpentProgress = 40;
+        private int mSpentProgress = 0;
         private int mTempSpentProgress = 0;
         private int delayMillis = 10;
+
+        public void setSpentProgress(int progress){
+            this.mSpentProgress = progress;
+        }
 
         WeakReference<MainFragment> mFragment = null;
 
@@ -72,13 +90,32 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(
                 R.layout.fragment_main, container, false);
+
         mProgressCircle = (ProgressCircle) view.findViewById(R.id.spent);
+        mFoodText = (TextView) view.findViewById(R.id.food);
+        mHealthText = (TextView) view.findViewById(R.id.health);
+        mTrafficText = (TextView) view.findViewById(R.id.traffic);
+        mOtherText = (TextView) view.findViewById(R.id.other);
+
+        mFoodFlag = view.findViewById(R.id.food_flag);
+        mHealthFlag = view.findViewById(R.id.health_flag);
+        mTrafficFlag = view.findViewById(R.id.traffic_flag);
+        mOtherFlag = view.findViewById(R.id.other_flag);
+
+        mAllText = (TextView) view.findViewById(R.id.all);
+        mQuotaText = (TextView) view.findViewById(R.id.quota);
+        mOverText = (TextView) view.findViewById(R.id.over);
+
+        mPercentText = (TextView) view.findViewById(R.id.percent);
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        mQuotaText.setText(String.format("of ￥%.2f",mQuota));
+        count();
         mIncrementHandler.sendEmptyMessageDelayed(0,500);
     }
 
@@ -95,6 +132,70 @@ public class MainFragment extends Fragment {
 
     public ProgressCircle getProgressCircle() {
         return mProgressCircle;
+    }
+
+    private void count(){
+        ContentResolver mCR = getActivity().getContentResolver();
+
+        Calendar cal = Calendar.getInstance();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        cal.set(Calendar.DATE,1);
+        String start = df.format(cal.getTime());
+        int lastday = cal.getMaximum(Calendar.DATE);
+        cal.set(Calendar.DATE,lastday);
+        String end = df.format(cal.getTime());
+
+        String selection = DBHelper.KEY_TIMESTAMP + " BETWEEN " +
+                "'"+start+"' AND  '"+end+"' " + "GROUP BY (" + DBHelper.KEY_TYPE+")";
+
+        Cursor cursor = mCR.query(DataProvider.CONTENT_URI, null
+                , selection, null, DBHelper.KEY_TYPE + " desc");
+
+        while (cursor != null && cursor.moveToNext()) {
+            String type = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_TYPE));
+            if (EditActivity.SORT_KEY_FOOD.equals(type)) {
+                mFoodMoney += cursor.getLong(cursor.getColumnIndex(DBHelper.KEY_AMOUNT));
+                mFoodText.setText(String.format("食品饮料 ￥%.2f",mFoodMoney));
+                ViewGroup.LayoutParams linearParams =  mFoodFlag.getLayoutParams();
+                float p = mFoodMoney/1000;
+                linearParams.width = (int)(p * DensityUtil.dip2px(getActivity(), 360));
+                mFoodFlag.setLayoutParams(linearParams);
+            } else if (EditActivity.SORT_KEY_HEALTH.equals(type)) {
+                mHealthMoney += cursor.getLong(cursor.getColumnIndex(DBHelper.KEY_AMOUNT));
+                mHealthText.setText(String.format("健康 ￥%.2f",mHealthMoney));
+                ViewGroup.LayoutParams linearParams =  mHealthFlag.getLayoutParams();
+                float p = mHealthMoney/1000;
+                linearParams.width = (int)(p * DensityUtil.dip2px(getActivity(), 360));
+                mHealthFlag.setLayoutParams(linearParams);
+            } else if (EditActivity.SORT_KEY_TRAFFIC.equals(type)) {
+                mTrafficMoney += cursor.getLong(cursor.getColumnIndex(DBHelper.KEY_AMOUNT));
+                mTrafficText.setText(String.format("交通 ￥%.2f",mTrafficMoney));
+                ViewGroup.LayoutParams linearParams =  mTrafficFlag.getLayoutParams();
+                float p = mTrafficMoney/1000;
+                linearParams.width = (int)(p * DensityUtil.dip2px(getActivity(), 360));
+                mTrafficFlag.setLayoutParams(linearParams);
+            } else if (EditActivity.SORT_KEY_OTHER.equals(type)) {
+                mOtherMoney += cursor.getLong(cursor.getColumnIndex(DBHelper.KEY_AMOUNT));
+                mOtherText.setText(String.format("其它 ￥%.2f",mOtherMoney));
+                ViewGroup.LayoutParams linearParams =  mOtherFlag.getLayoutParams();
+                float p = mOtherMoney/1000;
+                linearParams.width = (int)(p * DensityUtil.dip2px(getActivity(), 360));
+                mOtherFlag.setLayoutParams(linearParams);
+            }
+        }
+        cursor.close();
+
+        float all = mFoodMoney+mHealthMoney+mTrafficMoney+mOtherMoney;
+        mAllText.setText(String.format("%.2f",all));
+        if (all <= mQuota) {
+            mOverText.setText(String.format("距离你的限额还有 %.2f￥",mQuota - all));
+        } else {
+            mOverText.setText(String.format("本月已经超出预算 %.2f￥",all - mQuota));
+        }
+
+        int p = (int) (all / mQuota * 100) ;
+        mIncrementHandler.setSpentProgress(p);
+        mPercentText.setText(p + "%");
     }
 
 }
