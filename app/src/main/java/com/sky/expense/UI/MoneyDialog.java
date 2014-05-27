@@ -47,7 +47,9 @@ public class MoneyDialog extends DialogFragment implements View.OnClickListener{
                 R.id.num_6, R.id.num_7, R.id.num_8, R.id.num_9, R.id.num_point, R.id.backspace);
         mMoneyText = (TextView) mMainView.findViewById(R.id.money);
         mMoney = getArguments().getFloat(KEY_MONEY);
-        mInput = String.valueOf(mMoney);
+        if (mMoney > 0) {
+            mInput = String.valueOf(mMoney);
+        }
         mMoneyText.setText(String.format("%.2f",mMoney));
 
         mMainView.findViewById(R.id.backspace).setOnLongClickListener(new View.OnLongClickListener() {
@@ -78,7 +80,7 @@ public class MoneyDialog extends DialogFragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        int id = v.getId();
+         int id = v.getId();
         switch (id) {
             case R.id.num_0:
                 mInput = makeNumber("0");
@@ -116,6 +118,9 @@ public class MoneyDialog extends DialogFragment implements View.OnClickListener{
             case R.id.backspace:
                 if (mInput.length() > 0) {
                     mInput = mInput.substring(0,mInput.length()-1);
+                    if (mInput.length() > 0 && ".".equals(mInput.substring(mInput.length()-1,mInput.length()))) {
+                        mInput = mInput.substring(0,mInput.length()-1);
+                    }
                 }
                 break;
         }

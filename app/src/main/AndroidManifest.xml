@@ -22,7 +22,7 @@
             android:name="com.sky.expense.EditActivity"
             android:label="@string/title_activity_edit"
             android:parentActivityName="com.sky.expense.MainActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MainActivity" />
