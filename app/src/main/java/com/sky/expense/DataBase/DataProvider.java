@@ -24,6 +24,9 @@ public class DataProvider extends ContentProvider {
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/com.sky.transaction";
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/com.sky.transaction";
 
+    //数据改变后立即重新查询
+    private static final Uri NOTIFY_URI = Uri.parse("content://" + AUTHORITY + "/transactions");
+
     static {
         matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -76,20 +79,17 @@ public class DataProvider extends ContentProvider {
         if (match != TRANSACTION_ALL) {
             throw new IllegalArgumentException("Wrong URI: " + uri);
         }
-/*
         db = helper.getWritableDatabase();
         if (values == null) {
             values = new ContentValues();
-            values.put("name", "no name");
-            values.put("age", "1");
-            values.put("info", "no info.");
+            //TODO 在没有默认数据的情况下怎么办？
+            return null;
         }
-        long rowId = db.insert("person", null, values);
+        long rowId = db.insert("transactions", null, values);
         if (rowId > 0) {
             notifyDataChanged();
             return ContentUris.withAppendedId(uri, rowId);
         }
-*/
         return null;
 
     }
@@ -102,5 +102,10 @@ public class DataProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         return 0;
+    }
+
+    //通知指定URI数据已改变
+    private void notifyDataChanged() {
+        getContext().getContentResolver().notifyChange(NOTIFY_URI, null);
     }
 }

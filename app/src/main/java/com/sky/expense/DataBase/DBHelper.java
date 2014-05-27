@@ -15,17 +15,17 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TRANSACTIONS_TABLE_NAME 	= "transactions";
 
     public static final String KEY_ROW_ID 	= "_id";
-    public static final String KEY_AMOUNT 		= "amount";
     public static final String KEY_NAME 	= "name";
     public static final String KEY_TYPE 	= "type";
+    public static final String KEY_AMOUNT 		= "amount";
     public static final String KEY_DESCRIPTION 	= "description";
     public static final String KEY_TIMESTAMP 	= "timestamp";
 
 
 
-    private static final String TRANSACTIONS_TABLE_CREATE = "create table " + TRANSACTIONS_TABLE_NAME + " ("
+    private static final String TRANSACTIONS_TABLE_CREATE = "create table if not exists " + TRANSACTIONS_TABLE_NAME + " ("
             + KEY_ROW_ID 		+ " integer primary key autoincrement, "
-            + KEY_NAME 			+ " varchar(255), "
+            + KEY_NAME 			+ " text, "
             + KEY_TYPE 			+ " varchar(255) not null, "
             + KEY_AMOUNT 		+ " real default 0, "
             + KEY_DESCRIPTION 	+ " text, "
@@ -39,9 +39,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "CREATE TABLE IF NOT EXISTS expense" +
-                "(_id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, age INTEGER, info TEXT)";
-        db.execSQL(sql);
+        db.execSQL(TRANSACTIONS_TABLE_CREATE);
     }
 
     @Override

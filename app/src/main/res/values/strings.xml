@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ExpenseManager</string>
+    <string name="app_name">手记</string>
     <string name="title_section1">汇总</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_section2">历史</string>
+    <string name="title_section3">预算</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
-
     <string name="add_one">记一笔</string>
+    <string name="save">保存</string>
+    <string name="title_activity_edit">编辑</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+
 
 </resources>

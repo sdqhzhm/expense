@@ -4,6 +4,7 @@ package com.sky.expense;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.Intent;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -247,9 +248,10 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
-        if (item.getItemId() == R.id.action_example) {
-            Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
+        int id = item.getItemId();
+        if (id == R.id.action_add) {
+            Intent intent = new Intent(getActivity(), EditActivity.class);
+            startActivity(intent);
             return true;
         }
 
