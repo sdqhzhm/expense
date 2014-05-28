@@ -76,6 +76,8 @@ public class HistoryFragment extends Fragment {
         }
         HistoryPagerAdapter pagerAdapter = new HistoryPagerAdapter(mListViews, mAdapters);
         mViewPager.setAdapter(pagerAdapter);
+        Calendar c = Calendar.getInstance();
+        mViewPager.setCurrentItem(c.get(Calendar.MONTH));
     }
 
     public void query(){

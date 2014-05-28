@@ -4,11 +4,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.sky.expense.BudgetFragment;
 import com.sky.expense.R;
 
 /**
@@ -65,7 +67,14 @@ public class MoneyDialogForBudget extends DialogFragment implements View.OnClick
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ((TextView) getActivity().findViewById(R.id.money)).setText(String.format("%.2f",mMoney));
+                        if (getParentFragment() instanceof BudgetFragment) {
+                            BudgetFragment fragment = (BudgetFragment) getParentFragment();
+                            ((TextView)fragment.getView().findViewById(R.id.budget)).setText(String.format("本月预算金额：%.2f￥",mMoney));
+
+                            SharedPreferences.Editor sharedata = getActivity().getSharedPreferences("data", 0).edit();
+                            sharedata.putFloat("budget",mMoney);
+                            sharedata.commit();
+                        }
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

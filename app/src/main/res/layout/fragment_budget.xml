@@ -5,13 +5,24 @@
     android:orientation="vertical"
     tools:context="com.sky.expense.BudgetFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/budget"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_marginTop="50dp"
         android:padding="15dp"
         android:textSize="30sp"
-        android:text="当前预算金额：1000￥" />
+        android:text="本月预算金额：1500￥" />
+
+    <Button
+        android:id="@+id/set_budget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_margin="55dp"
+        android:background="@drawable/btn_gray_selector"
+        android:textColor="@color/white"
+        android:text="点击设置新的预算金额" />
 
 </LinearLayout>

@@ -1,13 +1,15 @@
 package com.sky.expense;
 
 
-
-import android.os.Bundle;
 import android.app.Fragment;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.sky.expense.UI.MoneyDialogForBudget;
 
 
 /**
@@ -17,6 +19,10 @@ import android.view.ViewGroup;
  *
  */
 public class BudgetFragment extends Fragment {
+
+    private TextView mBudgetText;
+
+    private float mBudget;
 
     public static BudgetFragment newInstance() {
         BudgetFragment fragment = new BudgetFragment();
@@ -30,13 +36,25 @@ public class BudgetFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sharedata = getActivity().getSharedPreferences("data", 0);
+        mBudget = sharedata.getFloat("budget", 1500);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_budget, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_budget, container, false);
+        mBudgetText = (TextView) view.findViewById(R.id.budget);
+        mBudgetText.setText(String.format("本月预算金额：%.2f￥",mBudget));
+        view.findViewById(R.id.set_budget).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MoneyDialogForBudget dialog = MoneyDialogForBudget.newIntance(mBudget);
+                dialog.show(getChildFragmentManager(), null);
+            }
+        });
+        return view;
     }
 
 

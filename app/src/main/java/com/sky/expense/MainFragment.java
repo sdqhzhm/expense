@@ -3,6 +3,7 @@ package com.sky.expense;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ContentResolver;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,10 +42,10 @@ public class MainFragment extends Fragment {
     private ProgressCircle mProgressCircle;
 
     private float mFoodMoney = 0, mHealthMoney = 0, mTrafficMoney = 0, mOtherMoney = 0;
-    private TextView mFoodText, mHealthText, mTrafficText, mOtherText, mPercentText, mAllText, mQuotaText, mOverText;
+    private TextView mFoodText, mHealthText, mTrafficText, mOtherText, mPercentText, mAllText, mBudgetText, mOverText;
     private View mFoodFlag, mHealthFlag, mTrafficFlag, mOtherFlag;
 
-    private float mQuota = 1500;
+    private float mBudget = 1500;
 
     private MyHandler mIncrementHandler = new MyHandler(this);
 
@@ -82,6 +83,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sharedata = getActivity().getSharedPreferences("data", 0);
+        mBudget = sharedata.getFloat("budget", 1500);
     }
 
     @Override
@@ -107,7 +110,7 @@ public class MainFragment extends Fragment {
         mOtherFlag = view.findViewById(R.id.other_flag);
 
         mAllText = (TextView) view.findViewById(R.id.all);
-        mQuotaText = (TextView) view.findViewById(R.id.quota);
+        mBudgetText = (TextView) view.findViewById(R.id.quota);
         mOverText = (TextView) view.findViewById(R.id.over);
 
         mPercentText = (TextView) view.findViewById(R.id.percent);
@@ -122,7 +125,7 @@ public class MainFragment extends Fragment {
         mHealthMoney = 0;
         mTrafficMoney = 0;
         mOtherMoney = 0;
-        mQuotaText.setText(String.format("of ￥%.2f",mQuota));
+        mBudgetText.setText(String.format("of ￥%.2f", mBudget));
         count();
         mIncrementHandler.sendEmptyMessageDelayed(0,500);
     }
@@ -198,13 +201,13 @@ public class MainFragment extends Fragment {
 
         float all = mFoodMoney+mHealthMoney+mTrafficMoney+mOtherMoney;
         mAllText.setText(String.format("%.2f",all));
-        if (all <= mQuota) {
-            mOverText.setText(String.format("距离你的限额还有 %.2f￥",mQuota - all));
+        if (all <= mBudget) {
+            mOverText.setText(String.format("距离你的限额还有 %.2f￥",mBudget - all));
         } else {
-            mOverText.setText(String.format("本月已经超出预算 %.2f￥",all - mQuota));
+            mOverText.setText(String.format("本月已经超出预算 %.2f￥",all - mBudget));
         }
 
-        int p = (int) (all / mQuota * 100) ;
+        int p = (int) (all / mBudget * 100) ;
         mIncrementHandler.setSpentProgress(p);
         mPercentText.setText(p + "%");
     }

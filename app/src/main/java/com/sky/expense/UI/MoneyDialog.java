@@ -68,12 +68,6 @@ public class MoneyDialog extends DialogFragment implements View.OnClickListener{
                         ((TextView) getActivity().findViewById(R.id.money)).setText(String.format("%.2f",mMoney));
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
                 .create();
 
     }

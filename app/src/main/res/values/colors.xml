@@ -16,4 +16,5 @@
 
     <drawable name="btn_pressed">#E033B5E5</drawable>
     <drawable name="btn_default">#00000000</drawable>
+    <drawable name="btn_blue">#FF33B5E5</drawable>
 </resources>
