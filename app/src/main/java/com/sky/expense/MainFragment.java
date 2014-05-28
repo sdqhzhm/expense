@@ -34,6 +34,10 @@ public class MainFragment extends Fragment {
         return fragment;
     }
 
+    public MainFragment(){
+
+    }
+
     private ProgressCircle mProgressCircle;
 
     private float mFoodMoney = 0, mHealthMoney = 0, mTrafficMoney = 0, mOtherMoney = 0;
