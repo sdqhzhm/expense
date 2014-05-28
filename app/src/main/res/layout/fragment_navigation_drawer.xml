@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="?android:attr/actionBarSize"
-    android:background="#eccc"
+    android:background="#fafafa"
     tools:context="com.sky.expense.NavigationDrawerFragment" >
 
     <ListView

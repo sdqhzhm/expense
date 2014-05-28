@@ -53,6 +53,8 @@ public class EditActivity extends Activity {
             tintManager.setStatusBarTintColor(actionBarColor);
         }
 
+        getActionBar().setDisplayShowHomeEnabled(false);
+
         mMoneyText = (TextView) findViewById(R.id.money);
         mMoneyText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,12 +116,20 @@ public class EditActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.action_save) {
+        if (id == R.id.action_save) {
+            float money = Float.parseFloat(mMoneyText.getText().toString());
+            if (money <= 0) {
+                Toast.makeText(getApplicationContext(),"请输入正确的金额！",Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            if (mSortKey == null) {
+                Toast.makeText(getApplicationContext(),"请选择正确的消费类别！",Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
             ContentResolver resolver =  getContentResolver();
             ContentValues values = new ContentValues();
-            values.put(DBHelper.KEY_AMOUNT, Float.parseFloat(mMoneyText.getText().toString()));
+            values.put(DBHelper.KEY_AMOUNT, money);
             values.put(DBHelper.KEY_NAME, mSortKey);
             values.put(DBHelper.KEY_TYPE, mSortKey);
             values.put(DBHelper.KEY_DESCRIPTION, mDescriptionEdit.getText().toString());
